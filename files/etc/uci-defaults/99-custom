@@ -1,0 +1,48 @@
+root_password=""
+wlan_name=""
+wlan_password=""
+wlan_ch="36"
+
+if [ -n "$root_password" ]; then
+  (echo "$root_password"; sleep 1; echo "$root_password") | passwd > /dev/null
+fi
+
+uci set network.lan.ipaddr='192.168.0.2'
+uci set network.lan.netmask='255.255.255.0'
+uci set network.lan.gateway='192.168.0.1'
+uci set network.lan.dns='192.168.0.1'
+uci set system.@system[0].hostname='DIR842'
+uci set network.lan.hostname="`uci get system.@system[0].hostname`"
+
+uci add_list network.@device[0].ports='eth0.2'
+
+uci set wireless.@wifi-iface[0].mode='sta'
+uci set wireless.@wifi-device[0].disabled='0'
+uci set wireless.@wifi-iface[0].disabled='0'
+uci set wireless.@wifi-iface[0].encryption='psk2+ccmp'
+uci set wireless.@wifi-iface[0].ssid="${wlan_name}-5G@unifi"
+uci set wireless.@wifi-iface[0].key="$wlan_password"
+uci set wireless.@wifi-iface[0].wds='1'
+uci set wireless.@wifi-device[0].channel="'$wlan_ch'"
+uci set wireless.@wifi-device[0].country='MY'
+
+# Configure Timezone
+timezone='<+08>-8'
+zonename='Asia/Kuala Lumpur'
+uci set system.@system[0].timezone="$timezone"
+uci set system.@system[0].zonename="$zonename"
+uci delete system.ntp.server
+uci add_list system.ntp.server='my.pool.ntp.org'
+uci add_list system.ntp.server='sg.pool.ntp.org'
+
+# /etc/config/dhcp
+uci del dhcp.wan
+# /etc/config/firewall
+uci del firewall.@zone[0].network
+uci del firewall.@zone[1].network
+
+# /etc/config/network
+uci del network.wan
+uci del network.wan6
+
+uci commit
