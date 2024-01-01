@@ -27,6 +27,9 @@ jobs:
           find .
           cat config
           cat config >> $GITHUB_ENV
+          sed -i "s/root_password=/root_password=${{ secrets.ROOT_PASS }}/" files/etc/uci-defaults/99-custom
+          sed -i "s/wlan_name=/wlan_name=${{ secrets.WLAN_NAME }}/" files/etc/uci-defaults/99-custom
+          sed -i "s/wlan_password=/wlan_password=${{ secrets.WLAN_PASS }}/" files/etc/uci-defaults/99-custom
        
       - name: Build openwrt image
         uses: izer-xyz/openwrt-imagebuilder-action@v5
