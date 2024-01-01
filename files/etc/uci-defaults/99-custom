@@ -1,7 +1,15 @@
-root_password=""
-wlan_name=""
-wlan_password=""
+root_password=
+wlan_name=
+wlan_password=
 wlan_ch="36"
+wlan_width="VHT40"
+
+sed -i 's/root_password=/root_password="123"/' script.sh
+sed -i 's/wlan_name=/wlan_name="Wan"/' script.sh
+sed -i 's/wlan_password=/wlan_password="Wan471227"/' script.sh
+sed -i 's/wlan_ch=/wlan_ch="36"/' script.sh
+sed -i 's/wlan_width=/wlan_width="VHT40"/' script.sh
+
 
 if [ -n "$root_password" ]; then
   (echo "$root_password"; sleep 1; echo "$root_password") | passwd > /dev/null
@@ -23,7 +31,8 @@ uci set wireless.@wifi-iface[0].encryption='psk2+ccmp'
 uci set wireless.@wifi-iface[0].ssid="${wlan_name}-5G@unifi"
 uci set wireless.@wifi-iface[0].key="$wlan_password"
 uci set wireless.@wifi-iface[0].wds='1'
-uci set wireless.@wifi-device[0].channel="'$wlan_ch'"
+uci set wireless.@wifi-device[0].channel="$wlan_ch"
+uci set wireless.@wifi-device[0].htmode="$wlan_width"
 uci set wireless.@wifi-device[0].country='MY'
 
 # Configure Timezone
