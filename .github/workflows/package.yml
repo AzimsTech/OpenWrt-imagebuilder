@@ -20,7 +20,7 @@ jobs:
 
     steps:
       
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Load configuration from repo
         run: |
@@ -32,7 +32,7 @@ jobs:
           sed -i "s/wlan_password=/wlan_password=${{ secrets.WLAN_PASS }}/" files/etc/uci-defaults/99-custom
        
       - name: Build openwrt image
-        uses: izer-xyz/openwrt-imagebuilder-action@v5
+        uses: izer-xyz/openwrt-imagebuilder-action@v6
         with:
           image: ${{ env.image }}
           profile: ${{ env.profile }}
