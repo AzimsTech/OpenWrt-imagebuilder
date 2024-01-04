@@ -20,7 +20,7 @@ jobs:
 
     steps:
       
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Load configuration from repo
         run: |
@@ -29,7 +29,7 @@ jobs:
           cat config >> $GITHUB_ENV
        
       - name: Build openwrt image
-        uses: izer-xyz/openwrt-imagebuilder-action@v5
+        uses: izer-xyz/openwrt-imagebuilder-action@v6
         with:
           image: ${{ env.image }}
           profile: ${{ env.profile }}
