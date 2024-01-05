@@ -1,9 +1,11 @@
 
-image=bcm27xx-bcm2711
+image=ramips-mt7621
 
-openwrt_version=23.05.0
+profile=dlink_dir-882-a1
 
-packages=block-mount -iwinfo
+openwrt_version=23.05.2
+
+packages=luci
 
 disabled_services=
 
