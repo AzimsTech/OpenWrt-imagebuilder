@@ -68,12 +68,18 @@ uci set network.lan.dns='192.168.0.1'
 uci commmit
 
 # Bridge WAN port with br-lan
-uci add_list network.@device[0].ports='eth0.2'
+#uci add_list network.@device[0].ports='eth0.2'
+uci set network.@switch_vlan[0].ports='0t 4 3 2 1 5'
+uci set network.@switch_vlan[1].ports='0t'
 uci commit
 
 # Delete wan & wan6 interface
 uci del network.wan
 uci del network.wan6
+uci commit
+
+# Disable IPv6
+uci set network.@device[0].ipv6='0'
 uci commit
 
 echo "All done!"
