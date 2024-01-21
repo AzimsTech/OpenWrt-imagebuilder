@@ -62,34 +62,7 @@ uci set system.@system[0].zonename="$zonename"
 uci delete system.ntp.server
 uci add_list system.ntp.server='my.pool.ntp.org'
 uci add_list system.ntp.server='sg.pool.ntp.org'
-uci set system.@system[0].hostname='OpenWrt'
-uci set network.lan.hostname="`uci get system.@system[0].hostname`"
 uci commit
 
-# Configure IPv6
-uci set network.wan.ipv6='1'
-uci set network.wan6.device='@wan'
-# uci set network.wan6.reqaddress='try'
-# uci set network.wan6.reqprefix='auto'
-uci set dhcp.lan.ra_default='2'
-uci set network.lan.ip6assign='64'
-uci commit
-
-# Configure DNS provider
-ipv4_dns1="1.1.1.3"
-ipv4_dns2="1.0.0.3"
-ipv6_dns1="2606:4700:4700::1113"
-ipv6_dns2="2606:4700:4700::1003"
-# IPv4
-uci set network.wan.peerdns="0"
-uci -q delete network.wan.dns
-uci add_list network.wan.dns="$ipv4_dns1"
-uci add_list network.wan.dns="$ipv4_dns2"
-# IPv6
-uci set network.wan6.peerdns="0"
-uci -q delete network.wan6.dns
-uci add_list network.wan6.dns="$ipv6_dns1"
-uci add_list network.wan6.dns="$ipv6_dns2"
-uci commit network
 
 echo "All done!"
