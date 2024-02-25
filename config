@@ -3,7 +3,7 @@ image=ramips-mt7621
 
 profile=dlink_dir-882-a1
 
-openwrt_version=23.05.2
+openwrt_version=SNAPSHOT
 
 packages=luci
 
