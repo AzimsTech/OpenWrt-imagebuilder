@@ -5,7 +5,7 @@ profile=dlink_dir-842-c2
 
 openwrt_version=SNAPSHOT
 
-packages=luci ath10k-firmware-qca9888 kmod-ath10k -ppp -ppp-mod-pppoe -ath10k-firmware-qca9888-ct -kmod-ath10k-ct
+packages=luci -ppp -ppp-mod-pppoe
 
 disabled_services=dnsmasq firewall odhcpd
 
