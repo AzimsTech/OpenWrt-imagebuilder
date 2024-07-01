@@ -5,7 +5,7 @@ profile=dlink_dir-882-a1
 
 openwrt_version=SNAPSHOT
 
-packages=luci
+packages=luci luci-app-sqm
 
 disabled_services=
 
