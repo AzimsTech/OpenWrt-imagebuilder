@@ -17,12 +17,28 @@ if [ -n "$root_password" ]; then
   (echo "$root_password"; sleep 1; echo "$root_password") | passwd > /dev/null
 fi
 
-# Configure LAN
+# Configure LAN interface
 # More options: https://openwrt.org/docs/guide-user/base-system/basic-networking
 if [ -n "$lan_ip_address" ]; then
   uci set network.lan.ipaddr="$lan_ip_address"
   uci commit network
 fi
+uci set network.lan.hostname='OpenWrt'
+uci set network.lan.delegate='0'
+uci set network.lan.ip6assign='64'
+uci add_list network.lan.ip6class='local'
+uci add_list network.lan.ip6class='wan6'
+uci commit network
+
+# Configure WAN interface
+uci set network.wan.ipv6='1'
+uci commit network
+
+# Configure WAN6 interface
+uci set network.wan6.device='@wan'
+uci set network.wan6.reqaddress='try'
+uci set network.wan6.reqprefix='auto'
+uci commit network
 
 # Configure WLAN
 # More options: https://openwrt.org/docs/guide-user/network/wifi/basic#wi-fi_interfaces
@@ -66,30 +82,18 @@ uci set system.@system[0].hostname='OpenWrt'
 uci set network.lan.hostname="`uci get system.@system[0].hostname`"
 uci commit
 
-# Configure IPv6
-uci set network.wan.ipv6='1'
-uci set network.wan6.device='@wan'
-# uci set network.wan6.reqaddress='try'
-# uci set network.wan6.reqprefix='auto'
-uci set dhcp.lan.ra_default='2'
-uci set network.lan.ip6assign='64'
-uci commit
-
 # Configure DNS provider
-ipv4_dns1="1.1.1.1"
-ipv4_dns2="1.0.0.1"
-ipv6_dns1="2606:4700:4700::1111"
-ipv6_dns2="2606:4700:4700::1001"
-# IPv4
-uci set network.wan.peerdns="0"
-uci -q delete network.wan.dns
-uci add_list network.wan.dns="$ipv4_dns1"
-uci add_list network.wan.dns="$ipv4_dns2"
-# IPv6
-uci set network.wan6.peerdns="0"
-uci -q delete network.wan6.dns
-uci add_list network.wan6.dns="$ipv6_dns1"
-uci add_list network.wan6.dns="$ipv6_dns2"
-uci commit network
+# Configure dnsmasq
+uci -q delete dhcp.lan.dhcp_option
+uci add_list dhcp.lan.dhcp_option="6,8.8.8.8,8.8.4.4"
+uci commit dhcp
+service dnsmasq restart
+ 
+# Configure odhcpd
+uci -q delete dhcp.lan.dns
+uci add_list dhcp.lan.dns="2001:4860:4860::8888"
+uci add_list dhcp.lan.dns="2001:4860:4860::8844"
+uci commit dhcp
+service odhcpd restart
 
 echo "All done!"

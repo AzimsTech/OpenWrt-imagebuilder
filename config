@@ -3,9 +3,9 @@ image=ramips-mt7621
 
 profile=dlink_dir-882-a1
 
-openwrt_version=23.05.3
+openwrt_version=23.05.4
 
-packages=luci
+packages=luci luci-app-sqm
 
 disabled_services=
 
