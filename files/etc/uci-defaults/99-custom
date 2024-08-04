@@ -87,13 +87,11 @@ uci commit
 uci -q delete dhcp.lan.dhcp_option
 uci add_list dhcp.lan.dhcp_option="6,8.8.8.8,8.8.4.4"
 uci commit dhcp
-service dnsmasq restart
  
 # Configure odhcpd
 uci -q delete dhcp.lan.dns
 uci add_list dhcp.lan.dns="2001:4860:4860::8888"
 uci add_list dhcp.lan.dns="2001:4860:4860::8844"
 uci commit dhcp
-service odhcpd restart
 
 echo "All done!"
