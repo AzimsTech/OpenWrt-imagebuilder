@@ -1,9 +1,9 @@
 
 image=ramips-mt7621
 
-profile=dlink_dir-882-a1
+profile=dlink_dir-2150-a1
 
-openwrt_version=23.05-SNAPSHOT
+openwrt_version=SNAPSHOT
 
 packages=luci luci-app-sqm
 
