@@ -5,7 +5,7 @@ profile=dlink_dir-2150-a1
 
 openwrt_version=24.10-SNAPSHOT
 
-packages=luci
+packages=luci dnsproxy
 
 disabled_services=
 
