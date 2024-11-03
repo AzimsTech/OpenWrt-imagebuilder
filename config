@@ -5,7 +5,7 @@ profile=dlink_dir-2150-a1
 
 openwrt_version=SNAPSHOT
 
-packages=luci luci-app-sqm luci-app-attendedsysupgrade
+packages=luci
 
 disabled_services=
 
