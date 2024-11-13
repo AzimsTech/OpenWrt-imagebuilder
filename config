@@ -1,10 +1,12 @@
 
-image=bcm27xx-bcm2711
+image=ath79-generic
 
-openwrt_version=23.05.0
+profile=dlink_dir-842-c2
 
-packages=block-mount -iwinfo
+openwrt_version=SNAPSHOT
 
-disabled_services=
+packages=luci -ppp -ppp-mod-pppoe
+
+disabled_services=dnsmasq firewall odhcpd
 
 debug=
