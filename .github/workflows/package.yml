@@ -1,60 +1,50 @@
-
-name: build
+name: Build and Publish OpenWrt Image
 
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  #push:
-    #branches: [ "main" ]
-  
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
-
-  create-image:
-  
+  build:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-        contents: write
 
     steps:
-      
-      - uses: actions/checkout@v4
-      
-      - name: Load configuration from repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
         run: |
-          find .
-          cat config
-          cat config >> $GITHUB_ENV
-          sed -i -e 's/^# wlan_name=".*"/wlan_name="${{ secrets.WLAN_NAME }}"/' \
-            -e 's/^# wlan_password=".*"/wlan_password="${{ secrets.WLAN_PASS }}"/' \
-            -e 's/^# root_password=".*"/root_password="${{ secrets.ROOT_PASS }}"/' \
-            -e 's/^# pppoe_username=".*"/pppoe_username="${{ secrets.PPPOE_NAME }}"/' \
-            -e 's/^# pppoe_password=".*"/pppoe_password="${{ secrets.PPPOE_PASS }}"/' files/etc/uci-defaults/99-custom
-       
-      - name: Build openwrt image
-        uses: izer-xyz/openwrt-imagebuilder-action@v6
+          sudo apt update
+          sudo apt install -y build-essential libncurses-dev zlib1g-dev gawk wget git gettext libssl-dev xsltproc rsync unzip python3 python3-distutils zstd
+
+      - name: Download and extract OpenWrt Image Builder
+        run: |
+          wget https://downloads.openwrt.org/releases/24.10-SNAPSHOT/targets/ath79/generic/openwrt-imagebuilder-24.10-SNAPSHOT-ath79-generic.Linux-x86_64.tar.zst
+          tar -xvf openwrt-imagebuilder-*.tar.zst
+
+      - name: Build OpenWrt Image
+        run: |
+          cd openwrt-imagebuilder-24.10-SNAPSHOT-ath79-generic.Linux-x86_64/
+          make image  \
+          PROFILE="dlink_dir-842-c2" \
+          PACKAGES="luci" \
+          FILES="files" \
+          DISABLED_SERVICES=""
+
+      - name: Create GitHub Release
+        id: create_release
+        run: |
+          TAG_NAME="v1.0.0"
+          RELEASE_NAME="OpenWrt Image v1.0.0"
+          BODY="This release contains the OpenWrt image for the dlink_dir-842-c2 profile."
+          curl -X POST \
+            -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" \
+            -d '{"tag_name": "'$TAG_NAME'", "name": "'$RELEASE_NAME'", "body": "'$BODY'", "draft": false, "prerelease": false}' \
+            https://api.github.com/repos/${{github.repository}}/releases
+
+      - name: Upload Image to GitHub Release
+        uses: ncipollo/release-action@v1
         with:
-          image: ${{ env.image }}
-          profile: ${{ env.profile }}
-          openwrt-version: ${{ env.openwrt_version }}
-          packages: ${{ env.packages }}
-          debug: ${{ env.debug }}
-          files: files
-          disabled-services: ${{ env.disabled_services }}
-      
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ env.profile }}-${{ env.openwrt_version }}-${{ github.run_number }}
-          body: |
-            Custom OpenWrt build ...
-            
-            * OpenWrt version: ${{ env.openwrt_version }}
-            * Image: ${{ env.image }}
-            * Profile: ${{ env.profile }}
-            * Packages: ${{ env.packages }}
-            
-          files: |
-            bin/*  
+          files: /home/runner/work/OpenWrt-Builder/OpenWrt-Builder/openwrt-imagebuilder-24.10-SNAPSHOT-ath79-generic.Linux-x86_64/bin/targets/ath79/generic/*.bin
+          tag: v1.0.0
