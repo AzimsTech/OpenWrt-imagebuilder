@@ -40,8 +40,9 @@ jobs:
           BODY="This release contains the OpenWrt image for the dlink_dir-842-c2 profile."
           curl -X POST \
             -H "Authorization: token ${{secrets.GITHUB_TOKEN}}" \
-            -d '{"tag_name": "'$TAG_NAME'", "name": "'$RELEASE_NAME'", "body": "'$BODY'", "draft": false, "prerelease": false}' \
+            -d "{\"tag_name\": \"$TAG_NAME\", \"name\": \"$RELEASE_NAME\", \"body\": \"$BODY\", \"draft\": false, \"prerelease\": false}" \
             https://api.github.com/repos/${{github.repository}}/releases
+
 
       - name: Upload Image to GitHub Release
         uses: ncipollo/release-action@v1
